@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<head>
+    <style>
+        .bar {
+            fill: rgb(16, 185, 81);
+        }
+
+        .bar:hover {
+            fill: rgb(22, 121, 83);
+        }
+
+        .axis {
+            font: 14px sans-serif;
+        }
+
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="my_dataviz"></div>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <script>
+        const data = [
+                {
+                    "info": {
+                        "officialName": "Abia",
+                        "Governor": "Okezie Ikpeazu",
+                        "DeputyGovernor": "Ude Okochukwu",
+                        "Population": 3727347,
+                        "Slogan": "God's Own State",
+                        "Capital": "Umuahia",
+                        "Area": 6320,
+                        "Latitude": "5.532003041",
+                        "Longitude": "7.486002487",
+                        "Number_of_LGAS": 17,
+                        "Date_created": "1991-08-27T00:00:00.000Z",
+                        "Website": "abiastate.gov.ng"
+                    },
+                    "Name": "abia"
+                },
+                {
+                    "info": {
+                        "officialName": "Adamawa",
+                        "Governor": "Bindo Jibrilla",
+                        "DeputyGovernor": "Martin Babale",
+                        "Population": 4248436,
+                        "Slogan": "Land of Beauty, Sunshine and Hospitality",
+                        "Capital": "Yola",
+                        "Area": 36917,
+                        "Latitude": "10.2703408",
+                        "Longitude": "13.2700321",
+                        "Number_of_LGAS": 21,
+                        "Date_created": "1991-08-27T00:00:00.000Z",
+                        "Website": "www.adamawastate.gov.ng"
+                    },
+                    "Name": "adamawa"
+                },
+                {
+                    "info": {
+                        "officialName": "Akwa Ibom",
+                        "Governor": "Udom Gabriel Emmanuel",
+                        "DeputyGovernor": "Moses Frank Ekpo",
+                        "Population": 5482177,
+                        "Slogan": "Land of Promise",
+                        "Capital": "Uyo",
+                        "Area": 7081,
+                        "Latitude": "5.007996056",
+                        "Longitude": "7.849998524",
+                        "Number_of_LGAS": 40,
+                        "Date_created": "1987-09-23T00:00:00.000Z",
+                        "Website": "akwaibomstate.gov.ng"
+                    },
+                    "Name": "akwaibom"
+                },
+                {
+                    "info": {
+                        "officialName": "Anambra",
+                        "Governor": "Willie Obiano",
+                        "DeputyGovernor": "Nkem Okeke",
+                        "Population": 5527809,
+                        "Slogan": "Light of the nation",
+                        "Capital": "Awka",
+                        "Area": 4844,
+                        "Latitude": "6.210433572",
+                        "Longitude": "7.06999711",
+                        "Number_of_LGAS": 21,
+                        "Date_created": "1991-08-26T00:00:00.000Z",
+                        "Website": "anambrastate.gov.ng"
+                    },
+                    "Name": "anambra"
+                },
+                {
+                    "info": {
+                        "officialName": "Bauchi",
+                        "Governor": "Mohammed Abdullahi Abubakar",
+                        "DeputyGovernor": "Nuhu Gidado",
+                        "Population": 6537314,
+                        "Slogan": "Pearl of Tourism",
+                        "Capital": "Bauchi",
+                        "Area": 49119,
+                        "Latitude": "10.3103642",
+                        "Longitude": "9.84000891",
+                        "Number_of_LGAS": 20,
+                        "Date_created": "1976-02-03T00:00:00.000Z",
+                        "Website": "www.bauchistate.gov.ng"
+                    },
+                    "Name": "bauchi"
+                },
+                {
+                "info": {
+                    "officialName": "Bauchi",
+                    "Governor": "Mohammed Abdullahi Abubakar",
+                    "DeputyGovernor": "Nuhu Gidado",
+                    "Population": 6537314,
+                    "Slogan": "Pearl of Tourism",
+                    "Capital": "Bauchi",
+                    "Area": 49119,
+                    "Latitude": "10.3103642",
+                    "Longitude": "9.84000891",
+                    "Number_of_LGAS": 10,
+                    "Date_created": "1976-02-03T00:00:00.000Z",
+                    "Website": "www.bauchistate.gov.ng"
+                },
+                "Name": "baudchi"
+            },
+            ];
+                
+        // set the dimensions of the canvas
+        var margin = { top: 20, right: 20, bottom: 70, left: 40 },
+            width = 600 - margin.left - margin.right,
+            height = 300 - margin.top - margin.bottom;
+
+
+        // set the ranges
+        var x = d3.scaleBand()
+                .rangeRound([0, width])
+                .padding(0.2);
+        var y = d3.scaleLinear()
+                .range([height, 0]);
+
+        // define the axis
+        var xAxis = d3.axisBottom(x);
+        var yAxis = d3.axisLeft(y);
+
+
+        // add the SVG element
+        var svg = d3.select("body")
+            .append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+
+        // load the data
+        data.forEach(function (d) {
+            d.Name = d.Name;
+            d.info.Number_of_LGAS = +d.info.Number_of_LGAS;
+        });
+
+        // scale the range of the data
+        x.domain(data.map(function (d) { return d.Name; }));
+        y.domain([0, d3.max(data, function (d) { return d.info.Number_of_LGAS; })]);
+
+        // add axis
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis)
+            .selectAll("text")
+            .style("text-anchor", "inherit")
+            .attr("dx", ".0em")
+            .attr("dy", ".55em");
+
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("transform", "rotate(-90)")
+            .attr("y", 5)
+            .attr("dy", ".71em")
+            .attr("text-anchor", "end")
+            .attr("stroke", "black")
+            .text("Number_of_LGAS");
+
+
+        // Add bar chart
+        svg.selectAll("bar")
+            .data(data)
+            .enter()
+            .append("rect")
+            .attr("class", "bar")
+            .attr("x", function (d) { return x(d.Name); })
+            .attr("width", x.bandwidth())
+            .attr("y", function (d) { return y(d.info.Number_of_LGAS); })
+            .attr("height", function (d) { return height - y(d.info.Number_of_LGAS); });
+
+
+
+
+
+
+
+
+        // set the dimensions and margins of the graph
+            const width2 = 450,
+                height2 = 450,
+                margin2 = 40;
+
+            // The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
+            const radius = Math.min(width2, height2) / 2 - margin2
+
+            // append the svg object to the div called 'my_dataviz'
+            const svg2 = d3.select("#my_dataviz")
+                .append("svg")
+                .attr("width", width2)
+                .attr("height", height2)
+                .append("g")
+                .attr("transform", `translate(${width2 / 2}, ${height2 / 2})`);
+
+            // Create dummy data2
+            const data2 = { a: 9, b: 20, c: 30, d: 8, e: 12 }
+
+            // set the color scale
+            const color = d3.scaleOrdinal()
+                .range(d3.schemeSet2);
+
+            // Compute the position of each group on the pie:
+            const pie = d3.pie()
+                .value(function (d) { return d[1] })
+            const data_ready = pie(Object.entries(data2))
+            // Now I know that group A goes from 0 degrees to x degrees and so on.
+
+            // shape helper to build arcs:
+            const arcGenerator = d3.arc()
+                .innerRadius(0)
+                .outerRadius(radius)
+
+            // Build the pie chart: Basically, each part of the pie is a path that we build using the arc function.
+            svg2
+                .selectAll('mySlices')
+                .data(data_ready)
+                .join('path')
+                .attr('d', arcGenerator)
+                .attr('fill', function (d) { return (color(d.data2[0])) })
+                .attr("stroke", "black")
+                .style("stroke-width", "2px")
+                .style("opacity", 0.7)
+
+            // Now add the annotation. Use the centroid method to get the best coordinates
+            svg2
+                .selectAll('mySlices')
+                .data(data_ready)
+                .join('text')
+                .text(function (d) { return "grp " + d.data2[0] })
+                .attr("transform", function (d) { return `translate(${arcGenerator.centroid(d)})` })
+                .style("text-anchor", "middle")
+                .style("font-size", 17)
+    </script>
+
+</body>
+
+</html>
